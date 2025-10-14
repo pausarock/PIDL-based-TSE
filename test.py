@@ -100,4 +100,3 @@ if __name__ == "__main__":
     layers_parsed = [int(x) for x in args.layers.split(',') if x.strip() != ""]
 
     main_test(data_dir=resolved_data_dir, weights_path=args.weights_path, layers=layers_parsed)
-

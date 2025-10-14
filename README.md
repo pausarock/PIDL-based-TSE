@@ -1,4 +1,4 @@
-# PIDL-JWZ for TSE on an expressway
+# PIDL-JWZ for TSE on an freeway
 
 Modularized from `PIDL_JWZ_withoutS.ipynb`. This repo provides:
 - Data loader for flow/speed (density excluded)
@@ -17,9 +17,10 @@ pidl_jwz_github/
   test.py
 ```
 
-Expected data files 
+Expected data files :
 - `sh_flow_data.csv`
 - `sh_speed_data.csv`
+
 
 ## Install
 ```bash
@@ -28,14 +29,13 @@ pip install -r requirements.txt
 
 ## Train
 ```bash
-python -m pidl_jwz_github.train
+python train.py
 ```
-This will save weights to `cv_v_modelq1.pat` and auto-run testing.
+This will save weights to `best_model.pat` and auto-run testing.
 
 ## Test
 ```bash
-python -m pidl_jwz_github.test
+python test.py
 ```
 It reports MAPE/RMSE and writes prediction CSVs.
-
 
