@@ -6,9 +6,9 @@ import pandas as pd
 from scipy.interpolate import griddata
 import torch
 
-from .data_loader import load_flow_speed, metrics_mape, metrics_rmse
-from .topology_loader import get_topology, region_N
-from .pinn import PINN_JWZ, get_device
+from data_loader import load_flow_speed, metrics_mape, metrics_rmse
+from topology_loader import get_topology, region_N
+from pinn import PINN_JWZ, get_device
 
 
 def main_test(data_dir: str = ".", weights_path: str = "best_model.pat", layers=None):
@@ -100,3 +100,4 @@ if __name__ == "__main__":
     layers_parsed = [int(x) for x in args.layers.split(',') if x.strip() != ""]
 
     main_test(data_dir=resolved_data_dir, weights_path=args.weights_path, layers=layers_parsed)
+
