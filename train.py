@@ -143,15 +143,15 @@ def main_train(
 
     # print parameter counts and FLOPs across ablations
     cfgs = [
-        (True, True, True, "完整模型"),
-        (False, True, True, "去掉注意力"),
-        (True, False, True, "去掉参数网络"),
-        (True, True, False, "去掉snet"),
+        (True, True, True, "PIDL"),
+        (False, True, True, "PIDL-1"),
+        (True, False, True, "PIDL-3"),
+        (True, True, False, "PIDL-4"),
     ]
     for inc_attn, inc_para, inc_snet, name in cfgs:
         total_params, trainable_params = count_parameters(model, include_attn=inc_attn, include_para=inc_para, include_snet=inc_snet)
         est_flops = estimate_flops_single_forward(model, include_attn=inc_attn, include_para=inc_para, include_snet=inc_snet)
-        print(f"[{name}] 参数: 总 {total_params:,} | 训 {trainable_params:,} | FLOPs: {est_flops:,} (~{est_flops/1e6:.2f} MFLOPs)")
+        print(f"[{name}] Parameters: Total {total_params:,} | Trainable {trainable_params:,} | FLOPs: {est_flops:,} (~{est_flops/1e6:.2f} MFLOPs)")
 
     x_u = torch.tensor(X_u_train[:, 0:1], requires_grad=True, dtype=torch.float32, device=device)
     t_u = torch.tensor(X_u_train[:, 1:2], requires_grad=True, dtype=torch.float32, device=device)
@@ -218,7 +218,7 @@ def main_train(
 
         if step % 100 == 0:
             pct = round(step / total_steps * 100)
-            print(f"\r进度: {pct}% loss1:{loss1.item():.5f} loss2:{loss2.item():.5f} loss3:{loss3.item():.5f} loss4:{loss4.item():.5f} loss5:{loss5.item():.5f}", end="")
+            print(f"\r {pct}% loss1:{loss1.item():.5f} loss2:{loss2.item():.5f} loss3:{loss3.item():.5f} loss4:{loss4.item():.5f} loss5:{loss5.item():.5f}", end="")
             sys.stdout.flush()
 
         if steps_since_improve >= patience:
