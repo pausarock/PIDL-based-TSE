@@ -9,9 +9,9 @@ from torch.optim import lr_scheduler
 from scipy.interpolate import griddata
 from pyDOE import lhs
 
-from .data_loader import load_flow_speed, metrics_mape, metrics_rmse
-from .topology_loader import get_topology, region_N
-from .pinn import PINN_JWZ, get_device, estimate_flops_single_forward, count_parameters
+from data_loader import load_flow_speed, metrics_mape, metrics_rmse
+from topology_loader import get_topology, region_N
+from pinn import PINN_JWZ, get_device, estimate_flops_single_forward, count_parameters
 
 alpha1 = 1/400
 alpha2 = 60
@@ -275,3 +275,4 @@ if __name__ == "__main__":
         beta2=args.beta2,
         gamma=args.gamma,
     )
+
