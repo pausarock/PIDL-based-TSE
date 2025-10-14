@@ -1,6 +1,6 @@
 # PIDL-JWZ for TSE on an freeway
 
-Modularized from `PIDL_JWZ_withoutS.ipynb`. This repo provides:
+This repo provides:
 - Data loader for flow/speed (density excluded)
 - Topology utilities (detectors, ramps, region function)
 - PINN model
@@ -38,4 +38,5 @@ This will save weights to `best_model.pat` and auto-run testing.
 python test.py
 ```
 It reports MAPE/RMSE and writes prediction CSVs.
+
 
