@@ -3,6 +3,7 @@ import sys
 import time
 import argparse
 import numpy as np
+import pandas as pd
 import torch
 import torch.nn as nn
 from torch.optim import lr_scheduler
@@ -12,6 +13,35 @@ from pyDOE import lhs
 from data_loader import load_flow_speed, metrics_mape, metrics_rmse
 from topology_loader import get_topology, region_N
 from pinn import PINN_JWZ, get_device, estimate_flops_single_forward, count_parameters
+
+def load_train_config():
+    """Load training configuration from CSV file"""
+    import os
+    # Get the parent directory where CSV files are located
+    parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    
+    config_df = pd.read_csv(os.path.join(parent_dir, 'train_config.csv'))
+    config_dict = {}
+    for _, row in config_df.iterrows():
+        config_name = row['config_name']
+        detector_ids_str = str(row['detector_ids'])  # Convert to string first
+        detector_ids = [int(x) for x in detector_ids_str.split(',')]
+        config_dict[config_name] = detector_ids
+    return config_dict
+
+def get_csv_default(config_name):
+    """Get default value from CSV file for command line arguments"""
+    try:
+        config = load_train_config()
+        return ','.join(map(str, config[config_name]))
+    except:
+        # Fallback to original hardcoded values if CSV reading fails
+        if config_name == 'id_list':
+            return "2,4,7,8,10,11,13,14,16,17,18,20,21,22,23,24,26,27,28,30,31"
+        elif config_name == 's_detect_id':
+            return "0,2,4,7,8,10,11,13,14,16,18,20,21,22,23,24,26,27,28,30,31"
+        else:
+            return ""
 
 alpha1 = 1/400
 alpha2 = 60
@@ -95,9 +125,12 @@ def main_train(
 
     default_layers = [2, 128, 128, 128, 64, 2]
     layers = layers or default_layers
-    default_id_list = [2,4,7,8,10,11,13,14,16,17,18,20,21,22,23,24,26,27,28,30,31]
+    
+    # Load training configuration from CSV
+    train_config = load_train_config()
+    default_id_list = train_config['id_list']
     id_list = id_list or default_id_list
-    default_s_detect_id = [0,2,4,7,8,10,11,13,14,16,18,20,21,22,23,24,26,27,28,30,31]
+    default_s_detect_id = train_config['s_detect_id']
     s_detect_id = s_detect_id or default_s_detect_id
 
     utn = 288
@@ -246,8 +279,8 @@ if __name__ == "__main__":
     parser.add_argument("--total_steps", type=int, default=int(env_or_default("TOTAL_STEPS", "30000")))
     parser.add_argument("--save_path", type=str, default=env_or_default("SAVE_PATH", "best_model.pat"))
     parser.add_argument("--layers", type=str, default=env_or_default("LAYERS", "2,128,128,128,64,2"))
-    parser.add_argument("--id_list", type=str, default=env_or_default("ID_LIST", "2,4,7,8,10,11,13,14,16,17,18,20,21,22,23,24,26,27,28,30,31"))
-    parser.add_argument("--s_detect_id", type=str, default=env_or_default("S_DETECT_ID", "0,2,4,7,8,10,11,13,14,16,18,20,21,22,23,24,26,27,28,30,31"))
+    parser.add_argument("--id_list", type=str, default=env_or_default("ID_LIST", get_csv_default("id_list")))
+    parser.add_argument("--s_detect_id", type=str, default=env_or_default("S_DETECT_ID", get_csv_default("s_detect_id")))
     parser.add_argument("--alpha1", type=float, default=float(env_or_default("ALPHA1", str(1/400))))
     parser.add_argument("--alpha2", type=float, default=float(env_or_default("ALPHA2", "60.0")))
     parser.add_argument("--beta1", type=float, default=float(env_or_default("BETA1", str(1/1000))))
@@ -259,8 +292,11 @@ if __name__ == "__main__":
     resolved_data_dir = args.data_dir if args.data_dir not in (None, "") else os.path.join(data_root, "..")
 
     layers_parsed = parse_int_list_layers(args.layers, [2,128,128,128,64,2])
-    id_list_parsed = parse_int_list_default(args.id_list, [2,4,7,8,10,11,13,14,16,17,18,20,21,22,23,24,26,27,28,30,31])
-    s_detect_id_parsed = parse_int_list_default(args.s_detect_id, [0,2,4,7,8,10,11,13,14,16,18,20,21,22,23,24,26,27,28,30,31])
+    
+    # Load training configuration from CSV
+    train_config = load_train_config()
+    id_list_parsed = parse_int_list_default(args.id_list, train_config['id_list'])
+    s_detect_id_parsed = parse_int_list_default(args.s_detect_id, train_config['s_detect_id'])
 
     main_train(
         data_dir=resolved_data_dir,

@@ -1,19 +1,31 @@
 import numpy as np
+import pandas as pd
 from typing import Tuple, List
 
-# Detector longitudinal positions along the corridor (km)
-X_DETECTORS = np.array([0,0.38,1.23,2.07,2.58,2.99,3.43,3.88,4.66,5.07,5.42,5.72,
-             6.47,7.24,7.59,7.88,8.33,8.77,9.20,9.59,10.24,10.79,
-             11.96,12.30,12.68,13.53,13.95,15.26,16.17,16.64,17.06,17.47], dtype=float)
+def load_topology_data():
+    """Load topology data from CSV files"""
+    import os
+    # Get the parent directory where CSV files are located
+    parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    
+    # Load detector positions
+    detector_df = pd.read_csv(os.path.join(parent_dir, 'detector_positions.csv'))
+    X_DETECTORS = detector_df['position_km'].values.astype(float)
+    
+    # Load ramp information
+    ramp_df = pd.read_csv(os.path.join(parent_dir, 'ramp_info.csv'))
+    RAMP_LOC = ramp_df['position_km'].tolist()
+    RAMP_TYPE = ramp_df['ramp_type'].tolist()
+    
+    # Load station configuration
+    station_df = pd.read_csv(os.path.join(parent_dir, 'station_config.csv'))
+    USE_ID = station_df[station_df['station_type'] == 'supervised']['station_id'].tolist()
+    UNCOVER_ID = station_df[station_df['station_type'] == 'hidden']['station_id'].tolist()
+    
+    return X_DETECTORS, RAMP_LOC, RAMP_TYPE, USE_ID, UNCOVER_ID
 
-# Ramp locations (km) and types (+1 on-ramp, -1 off-ramp)
-RAMP_LOC = [0.65,1.8,3.2,4.2,4.9,5.65,7.12,7.42,8.15,8.97,9.39,10.5,11.5,12.07,12.29,12.6,14.15,15.5,16.5,17.2]
-RAMP_TYPE = [1,-1,-1,1,-1,1,-1,-1,1,1,-1,1,-1,-1,1,-1,1,-1,-1,1]
-
-# Indices used for supervised boundary stations
-USE_ID = [0,2,4,7,8,10,11,13,14,16,17,18,20,21,22,23,24,26,27,28,30,31]
-# Hidden stations for test visualization (subset)
-UNCOVER_ID = [1,3,5,6,9,12,15,19,25,29]
+# Load topology data
+X_DETECTORS, RAMP_LOC, RAMP_TYPE, USE_ID, UNCOVER_ID = load_topology_data()
 
 
 def region_N(x_grid: np.ndarray) -> np.ndarray:
