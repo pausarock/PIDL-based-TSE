@@ -5,7 +5,7 @@ This repository provides a modularized implementation of Physics-Informed Deep L
 # Citation (Key Reference)
 For the underlying theory and methodology of Physics-Informed Deep Learning applied in this repository, refer to the following publication:
 
-Yu, H., Wang, Y., Jin, F., Roncoli, C., Zhao, M., Zheng, P., Guo, J. and Zhang, L., 2025. Physics-Informed Deep Learning for Traffic State Estimation on Freeways: A Comprehensive Comparative Study. IEEE Transactions on Intelligent Transportation Systems.
+H. Yu et al., "Physics-Informed Deep Learning for Traffic State Estimation on Freeways: A Comprehensive Comparative Study," in IEEE Transactions on Intelligent Transportation Systems, vol. 27, no. 4, pp. 4824-4841, April 2026.
  [DOI: 10.1109/ITSC.2025.11311170](https://ieeexplore.ieee.org/abstract/document/11311170)
 
 The paper provides a detailed comparison between PIDL and other state-of-the-art traffic estimation methods, validating the robustness of PIDL in multi-ramp freeway environments.
